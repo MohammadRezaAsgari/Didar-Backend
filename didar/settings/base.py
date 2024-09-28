@@ -141,6 +141,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 # rest-framework configs
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'utils.api.custom_pagination.CustomLimitOffsetPagination',
+    'PAGE_SIZE': 36,
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
