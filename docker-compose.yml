@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  didar:
+    image: didar-django:2022.09.28.dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REQUIREMENTS_FILE: "requirements.txt"
+    command: gunicorn -c python:didar.gunicorn_conf --bind :8888 didar.wsgi:application --reload
+    restart: always
+    ports:
+      - 8888:8888
+    depends_on:
+      - didar-db
+    env_file:
+      - .env
+    volumes:
+      - .:/home/didar/didar-backend
+    networks:
+      - didar-net
+
+  didar-db:
+    image: postgres:13.5
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - didar_postgres_data_storage:/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    networks:
+      - didar-net
+
+volumes:
+  didar_postgres_data_storage:
+
+networks:
+  didar-net:
+#    external: true
