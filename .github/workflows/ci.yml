@@ -28,7 +28,7 @@ jobs:
           --health-retries 5
 
     env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SECRET_KEY: django-insecure-pg5qpxt=6kychycn8+%z8&qu9&##(c%ullqe-e4qvbb*@5j)6h
       POSTGRES_HOST: localhost
       POSTGRES_USER: didar
       POSTGRES_PASSWORD: d1d2a3r
