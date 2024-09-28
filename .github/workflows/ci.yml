@@ -7,25 +7,9 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:13
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -41,14 +25,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Copy .env file to GitHub Actions environment
+      - name: Set environment variables
         run: |
-          echo "DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/test_db" >> .env
-          echo "POSTGRES_USER=postgres" >> .env
-          echo "POSTGRES_PASSWORD=postgres" >> .env
-          echo "POSTGRES_DB=test_db" >> .env
+          echo "POSTGRES_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "POSTGRES_DB=test_db" >> $GITHUB_ENV
+          echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=postgres" >> $GITHUB_ENV
+          echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
 
       - name: Run migrations
+        env:
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
         run: |
           python manage.py migrate
 
