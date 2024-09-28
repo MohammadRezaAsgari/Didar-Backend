@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    #'drf_yasg',
     'drf_spectacular',
+    # Local apps
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = "users.User"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
