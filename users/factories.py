@@ -3,6 +3,9 @@ from django.contrib.auth import get_user_model
 import factory
 from faker import Faker
 
+from faculty.factories import DepartmentFactory
+from users.models import Instructor
+
 User = get_user_model()
 fake = Faker()
 
@@ -18,3 +21,11 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
         django_get_or_create = ("email", "phone", "username")
+
+
+class InstructorFactory(factory.django.DjangoModelFactory):
+    department = factory.SubFactory(DepartmentFactory)
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = Instructor

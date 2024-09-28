@@ -31,3 +31,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
+
+    @property
+    def is_instructor(self):
+        return hasattr(self, "instructor")
+
+
+class Instructor(models.Model):
+    user = models.OneToOneField(
+        "users.User", on_delete=models.CASCADE, related_name="instructor")
+    bio = models.TextField(blank=True, null=True)
+    room_phone = models.CharField(max_length=255, null=True,
+                                  blank=True, unique=True)
+    room_number = models.PositiveIntegerField(null=True, blank=True, unique=True)
+    is_available_now = models.BooleanField(default=False)
+    department = models.ForeignKey(
+        "faculty.Department", on_delete=models.CASCADE, related_name="instructors")
+    # weekly_schedule
+
+    def __str__(self):
+        return f"{self.user.username}"

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from users.models import User
+from users.models import User, Instructor
 
 
 class CustomUserAdmin(UserAdmin):
@@ -41,4 +41,32 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
+class InstructorAdmin(admin.ModelAdmin):
+    model = Instructor
+    list_display = [
+        "username",
+        "phone",
+        "email",
+        "full_name",
+        "is_active",
+        "is_available_now",
+        "department",
+    ]
+
+    def full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
+
+    def username(self, obj):
+        return obj.user.username
+
+    def phone(self, obj):
+        return obj.user.phone
+
+    def email(self, obj):
+        return obj.user.email
+
+    def is_active(self, obj):
+        return obj.user.is_active
+
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(Instructor, InstructorAdmin)

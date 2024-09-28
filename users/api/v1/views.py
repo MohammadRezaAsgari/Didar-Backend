@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from users.api.v1.serializers import (
+    InstructorSerializer,
     UserProfileInputSerializer,
     LogOutSerializer,
     LoginPasswordSerializer,
@@ -20,7 +21,7 @@ from users.api.v1.serializers import (
 from utils.api.error_objects import ErrorObject
 from utils.api.mixins import BadRequestSerializerMixin
 from utils.api.responses import error_response, success_response
-from utils.permissions import IsAuthenticatedAndActive
+from utils.permissions import IsAuthenticatedAndActive, IsInstructor
 
 User = get_user_model()
 
@@ -154,3 +155,24 @@ class UserProfileAPIView(BadRequestSerializerMixin, APIView):
             return error_response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
+
+
+class InstructorProfileAPIView(BadRequestSerializerMixin, APIView):
+    permission_classes = [IsAuthenticatedAndActive, IsInstructor]
+
+    @extend_schema(
+        request=InstructorSerializer,
+        responses={204: {}},
+        auth=None,
+        operation_id='InstructorProfileUpdate',
+        tags=['Auth'],
+    )
+    def patch(self, request):
+        instructor_obj = request.user.instructor
+        serializer = InstructorSerializer(
+            instructor_obj, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return error_response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
+    

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from users.models import Instructor
 
 User = get_user_model()
 
@@ -53,6 +54,7 @@ class LoginOutputSerializer(serializers.ModelSerializer):
             'access',
             'refresh',
             'access_token_expires_at',
+            'is_instructor',
         ]
 
 
@@ -60,11 +62,28 @@ class LogOutSerializer(serializers.Serializer):
     refresh = serializers.CharField(required=True)
 
 
+class InstructorSerializer(serializers.ModelSerializer):
+    department = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Instructor
+        fields = [
+            'bio',
+            'room_phone',
+            'room_number',
+            'is_available_now',
+            'department',
+        ]
+
+    def get_department(self, obj):
+        return obj.department.name
+
 class UserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.SerializerMethodField(source='get_phone')
     gender = serializers.IntegerField(
         help_text='ENUM  `1:Male`, `2:Female`'
     )
+    instructor = InstructorSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -74,6 +93,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'last_name',
             'email',
             'gender',
+            'is_instructor',
+            'instructor',
         ]
 
     def get_phone(self, obj):
@@ -83,6 +104,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
             str_list[-4] = str_list[-5] = str_list[-6] = '*'
             return ''.join(str_list)
         return user_phone
+
+    def get_instructor(self, obj):
+        if obj.is_instructor:
+            return obj.instructor
+        return None
 
 
 class UserProfileInputSerializer(serializers.ModelSerializer):

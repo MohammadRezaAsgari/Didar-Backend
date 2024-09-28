@@ -5,6 +5,7 @@ from users.api.v1.views import (
     LoginPasswordAPIView,
     LogOutAPIView,
     UserProfileAPIView,
+    InstructorProfileAPIView,
 )
 
 app_name = 'v1'
@@ -17,4 +18,5 @@ urlpatterns = [
     path("auth/refresh/", DecoratedRefreshTokenView.as_view(), name="token_refresh"),
     path("auth/logout/", LogOutAPIView.as_view(), name="logout"),
     path('auth/me/', UserProfileAPIView.as_view(), name='user_profile'),
+    path('auth/instructor/', InstructorProfileAPIView.as_view(), name='instructor_profile'),
 ]
