@@ -6,9 +6,6 @@ from users.models import User
 
 class CustomUserAdmin(UserAdmin):
     model = User
-    readonly_fields = [
-        "username",
-    ]
     list_display = [
         "username",
         "phone",
