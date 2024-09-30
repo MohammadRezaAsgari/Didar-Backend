@@ -14,6 +14,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=150, null=True, blank=True)
     last_name = models.CharField(max_length=150, null=True, blank=True)
 
+    faculty = models.ForeignKey(
+        "faculty.Faculty", on_delete=models.SET_NULL, related_name="students", null=True, blank=True)
+
     GENDER_MALE = 1
     GENDER_FEMALE = 2
     GENDERS = (

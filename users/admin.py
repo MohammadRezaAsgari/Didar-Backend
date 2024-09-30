@@ -19,14 +19,15 @@ class CustomUserAdmin(UserAdmin):
         "is_active",
         "is_superuser",
     ]
-    search_fields = ["username", "phone", "email", "first_name", "last_name"]
+    search_fields = ["username", "phone", "email",
+                     "first_name", "last_name", "faculty"]
     list_display_links = ["username", "phone", "email"]
 
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         ("Personal info", {
-         "fields": ("first_name", "last_name", "email", "phone")}),
+         "fields": ("first_name", "last_name", "email", "phone", "faculty")}),
         (
             "Permissions",
             {

@@ -4,4 +4,4 @@
 
 ``` python manage.py create_faculty ```
 
-``` python manage.py create_department ``
+``` python manage.py create_department ```

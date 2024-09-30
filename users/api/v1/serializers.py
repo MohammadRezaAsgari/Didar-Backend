@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from faculty.api.v1.serializers import DepartmentSerializer, FacultySerializer
 from users.models import Instructor
 
 User = get_user_model()
@@ -13,6 +14,7 @@ class LoginPasswordSerializer(serializers.Serializer):
 
 
 class LoginOutputSerializer(serializers.ModelSerializer):
+    faculty = FacultySerializer(read_only=True)
     gender = serializers.IntegerField(
         help_text='ENUM  `1:Male`, `2:Female`'
     )
@@ -51,6 +53,7 @@ class LoginOutputSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'gender',
+            'faculty',
             'access',
             'refresh',
             'access_token_expires_at',
@@ -63,7 +66,7 @@ class LogOutSerializer(serializers.Serializer):
 
 
 class InstructorSerializer(serializers.ModelSerializer):
-    department = serializers.SerializerMethodField(read_only=True)
+    department = DepartmentSerializer(read_only=True)
 
     class Meta:
         model = Instructor
@@ -75,15 +78,13 @@ class InstructorSerializer(serializers.ModelSerializer):
             'department',
         ]
 
-    def get_department(self, obj):
-        return obj.department.name
-
 class UserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.SerializerMethodField(source='get_phone')
     gender = serializers.IntegerField(
         help_text='ENUM  `1:Male`, `2:Female`'
     )
     instructor = InstructorSerializer(read_only=True)
+    faculty = FacultySerializer(read_only=True)
 
     class Meta:
         model = User
@@ -95,6 +96,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'gender',
             'is_instructor',
             'instructor',
+            'faculty',
         ]
 
     def get_phone(self, obj):
