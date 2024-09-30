@@ -1,0 +1,170 @@
+[
+    {
+        "model": "faculty.Department",
+        "pk": "1",
+        "fields": {
+            "name": "آمار",
+            "faculty": 1
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "2",
+        "fields": {
+            "name": "ریاضیات کاربردی",
+            "faculty": 1
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "3",
+        "fields": {
+            "name": "ریاضیات محض",
+            "faculty": 1
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "4",
+        "fields": {
+            "name": "نرم‌افزار و سیستم های اطلاعاتی",
+            "faculty": 2
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "5",
+        "fields": {
+            "name": "هوش مصنوعیو رباتیک و رایانش شناختی",
+            "faculty": 2
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "6",
+        "fields": {
+            "name": "معماری کامپیوتر و شبکه‌",
+            "faculty": 2
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "7",
+        "fields": {
+            "name": "زبان و ادبیات فارسی",
+            "faculty": 3
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "8",
+        "fields": {
+            "name": "زبان انگلیسی",
+            "faculty": 3
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "9",
+        "fields": {
+            "name": "زبان فرانسه",
+            "faculty": 3
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "10",
+        "fields": {
+            "name": "زبان آلمانی",
+            "faculty": 3
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "11",
+        "fields": {
+            "name": "حقوق عمومی",
+            "faculty": 4
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "12",
+        "fields": {
+            "name": "حقوق خصوصی",
+            "faculty": 4
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "13",
+        "fields": {
+            "name": "حقوق بین‌الملل",
+            "faculty": 4
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "14",
+        "fields": {
+            "name": "حقوق جزا",
+            "faculty": 4
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "15",
+        "fields": {
+            "name": "طراحی معماری",
+            "faculty": 5
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "16",
+        "fields": {
+            "name": "مرمت بناهای تاریخی",
+            "faculty": 5
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "17",
+        "fields": {
+            "name": "مدیریت پروژه و ساخت",
+            "faculty": 5
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "18",
+        "fields": {
+            "name": "روانشناسی بالینی",
+            "faculty": 6
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "19",
+        "fields": {
+            "name": "روانشناسی تربیتی",
+            "faculty": 6
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "20",
+        "fields": {
+            "name": "روانشناسی صنعتی و سازمانی",
+            "faculty": 6
+        }
+    },
+    {
+        "model": "faculty.Department",
+        "pk": "21",
+        "fields": {
+            "name": "مشاوره",
+            "faculty": 6
+        }
+    }
+]

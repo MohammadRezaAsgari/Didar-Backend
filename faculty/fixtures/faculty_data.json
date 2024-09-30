@@ -1,0 +1,44 @@
+[
+  {
+      "model": "faculty.Faculty",
+      "pk": "1",
+      "fields": {
+          "name": "ریاضی و آمار"
+      }
+  },
+  {
+      "model": "faculty.Faculty",
+      "pk": "2",
+      "fields": {
+          "name": "مهندسی و علوم کامپیوتر"
+      }
+  },
+  {
+      "model": "faculty.Faculty",
+      "pk": "3",
+      "fields": {
+          "name": "ادبیات و زبان های خارجی"
+      }
+  },
+  {
+      "model": "faculty.Faculty",
+      "pk": "4",
+      "fields": {
+          "name": "حقوق"
+      }
+  },
+  {
+      "model": "faculty.Faculty",
+      "pk": "5",
+      "fields": {
+          "name": "معماری"
+      }
+  },
+  {
+      "model": "faculty.Faculty",
+      "pk": "6",
+      "fields": {
+          "name": "روانشناسی"
+      }
+  }
+]
