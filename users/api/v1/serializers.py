@@ -66,7 +66,7 @@ class LogOutSerializer(serializers.Serializer):
 
 
 class InstructorListSerializer(serializers.ModelSerializer):
-    name = serializers.CharField()
+    name = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Instructor

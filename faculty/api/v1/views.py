@@ -67,9 +67,7 @@ class FacultyDepartmentListAPIView(BadRequestSerializerMixin, ListAPIView):
         try:
             faculty_obj = Faculty.objects.get(id=faculty_id)
         except Faculty.DoesNotExist:
-            return error_response(
-                error=ErrorObject.FACULTY_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
-            )
+            raise Faculty.DoesNotExist
         return Department.objects.filter(faculty=faculty_obj)
 
     @extend_schema(
@@ -81,7 +79,12 @@ class FacultyDepartmentListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        try:
+            return super().get(request, *args, **kwargs)
+        except Faculty.DoesNotExist:
+            return error_response(
+                error=ErrorObject.FACULTY_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+            )
 
 
 class DepartmentByIdAPIView(BadRequestSerializerMixin, APIView):
@@ -98,7 +101,7 @@ class DepartmentByIdAPIView(BadRequestSerializerMixin, APIView):
         department_id = kwargs.get('department_id')
         try:
             department_obj = Department.objects.get(id=department_id)
-        except Faculty.DoesNotExist:
+        except Department.DoesNotExist:
             return error_response(
                 error=ErrorObject.DEPARTMENT_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
             )
@@ -114,11 +117,9 @@ class DepartmentInstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
         department_id = self.kwargs.get('department_id')
         try:
             department_obj = Department.objects.get(id=department_id)
-        except Faculty.DoesNotExist:
-            return error_response(
-                error=ErrorObject.DEPARTMENT_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
-            )
-        return department_obj.instructors
+        except Department.DoesNotExist:
+            raise Department.DoesNotExist
+        return department_obj.instructors.all()
 
     @extend_schema(
         request=None,
@@ -129,4 +130,9 @@ class DepartmentInstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        try:
+            return super().get(request, *args, **kwargs)
+        except Department.DoesNotExist:
+            return error_response(
+                error=ErrorObject.DEPARTMENT_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+            )
