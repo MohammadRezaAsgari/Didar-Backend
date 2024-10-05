@@ -1,9 +1,8 @@
-from django.contrib.auth import get_user_model
-
 import factory
+from django.contrib.auth import get_user_model
 from faker import Faker
 
-from faculty.models import Faculty, Department
+from faculty.models import Department, Faculty
 
 fake = Faker()
 

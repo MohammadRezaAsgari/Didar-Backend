@@ -1,7 +1,8 @@
 import json
+
 from django.db import transaction
 
-from faculty.models import Faculty, Department
+from faculty.models import Department, Faculty
 
 
 class DataImporter:
@@ -21,9 +22,10 @@ class DataImporter:
     def _create_department(cls, data) -> None:
         for instance in data:
             faculty_object = Faculty.objects.get(
-                id=instance.get("fields").get("faculty"))
+                id=instance.get("fields").get("faculty")
+            )
             Department.objects.get_or_create(
-                pk=instance.get('pk'),
-                name=instance.get('fields').get("name"),
-                faculty=faculty_object
+                pk=instance.get("pk"),
+                name=instance.get("fields").get("name"),
+                faculty=faculty_object,
             )

@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
-from faculty.models import Faculty, Department
+from faculty.models import Department, Faculty
 
 
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
         fields = [
-            'id',
-            'name',
+            "id",
+            "name",
         ]
 
 
@@ -16,9 +16,10 @@ class FacultyDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
         fields = [
-            'id',
-            'name',
+            "id",
+            "name",
         ]
+
 
 class DepartmentSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer()
@@ -26,9 +27,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = [
-            'id',
-            'name',
-            'faculty',
+            "id",
+            "name",
+            "faculty",
         ]
 
 
@@ -38,7 +39,7 @@ class DepartmentDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = [
-            'id',
-            'name',
-            'faculty',
+            "id",
+            "name",
+            "faculty",
         ]

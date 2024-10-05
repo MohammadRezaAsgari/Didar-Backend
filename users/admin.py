@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from users.models import User, Instructor
+from users.models import Instructor, User
 
 
 class CustomUserAdmin(UserAdmin):
@@ -19,15 +19,15 @@ class CustomUserAdmin(UserAdmin):
         "is_active",
         "is_superuser",
     ]
-    search_fields = ["username", "phone", "email",
-                     "first_name", "last_name", "faculty"]
+    search_fields = ["username", "phone", "email", "first_name", "last_name", "faculty"]
     list_display_links = ["username", "phone", "email"]
-
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Personal info", {
-         "fields": ("first_name", "last_name", "email", "phone", "faculty")}),
+        (
+            "Personal info",
+            {"fields": ("first_name", "last_name", "email", "phone", "faculty")},
+        ),
         (
             "Permissions",
             {
@@ -68,6 +68,7 @@ class InstructorAdmin(admin.ModelAdmin):
 
     def is_active(self, obj):
         return obj.user.is_active
+
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Instructor, InstructorAdmin)

@@ -2,10 +2,11 @@ from django.contrib.auth.base_user import BaseUserManager
 
 
 class CustomUserManager(BaseUserManager):
-
     use_in_migrations = True
 
-    def _create_user(self, username=None, email=None, phone=None, password=None, **extra_fields):
+    def _create_user(
+        self, username=None, email=None, phone=None, password=None, **extra_fields
+    ):
         """Create and save a User with the given email/phone and password."""
         if email:
             email = self.normalize_email(email)
@@ -19,7 +20,9 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_user(self, username=None, email=None, phone=None, password=None, **extra_fields):
+    def create_user(
+        self, username=None, email=None, phone=None, password=None, **extra_fields
+    ):
         """Create and save a regular User with the given email/phone and password."""
         if not any([email, phone]):
             raise ValueError("email or phone must be set")

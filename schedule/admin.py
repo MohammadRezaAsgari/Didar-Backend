@@ -17,8 +17,18 @@ class ScheduleAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {"fields": ("code",)}),
-        ("Info", {
-         "fields": ("title", "instructor", "day_of_week", "start_time", "end_time")}),
+        (
+            "Info",
+            {
+                "fields": (
+                    "title",
+                    "instructor",
+                    "day_of_week",
+                    "start_time",
+                    "end_time",
+                )
+            },
+        ),
         (
             None,
             {

@@ -4,7 +4,6 @@ from schedule.models import Schedule
 
 
 class InstructorScheduleSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Schedule
         fields = [
@@ -21,7 +20,6 @@ class InstructorScheduleSerializer(serializers.ModelSerializer):
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Schedule
         fields = [

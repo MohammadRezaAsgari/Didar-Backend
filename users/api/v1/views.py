@@ -9,15 +9,12 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from users.api.v1.serializers import (
-    InstructorSerializer,
-    UserProfileInputSerializer,
-    LogOutSerializer,
-    LoginPasswordSerializer,
-    LoginOutputSerializer,
-    UserProfileSerializer
-)
-
+from users.api.v1.serializers import (InstructorSerializer,
+                                      LoginOutputSerializer,
+                                      LoginPasswordSerializer,
+                                      LogOutSerializer,
+                                      UserProfileInputSerializer,
+                                      UserProfileSerializer)
 from utils.api.error_objects import ErrorObject
 from utils.api.mixins import BadRequestSerializerMixin
 from utils.api.responses import error_response, success_response
@@ -37,16 +34,16 @@ class LoginPasswordAPIView(BadRequestSerializerMixin, APIView):
         request=LoginPasswordSerializer,
         responses={200: LoginOutputSerializer},
         auth=None,
-        operation_id='LoginWithPassword',
-        tags=['Auth'],
+        operation_id="LoginWithPassword",
+        tags=["Auth"],
     )
     def post(self, request):
         serializer = LoginPasswordSerializer(data=request.data)
         if not serializer.is_valid():
             return self.serializer_error_response(serializer)
 
-        username = serializer.validated_data.get('username')
-        password = serializer.validated_data.get('password')
+        username = serializer.validated_data.get("username")
+        password = serializer.validated_data.get("password")
 
         try:
             user_obj = User.objects.get(username=username, is_active=True)
@@ -61,7 +58,7 @@ class LoginPasswordAPIView(BadRequestSerializerMixin, APIView):
                 error=ErrorObject.UN_AUTH, status_code=status.HTTP_401_UNAUTHORIZED
             )
 
-        output = LoginOutputSerializer(user_obj, context={'request': request})
+        output = LoginOutputSerializer(user_obj, context={"request": request})
         return success_response(data=output.data, status_code=status.HTTP_200_OK)
 
 
@@ -85,10 +82,13 @@ class DecoratedRefreshTokenView(TokenRefreshView):
             serializer.is_valid()
         except TokenError:
             return error_response(
-                error=ErrorObject.INVALID_TOKEN, status_code=status.HTTP_406_NOT_ACCEPTABLE
+                error=ErrorObject.INVALID_TOKEN,
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
-        return success_response(data=serializer.validated_data, status_code=status.HTTP_200_OK)
+        return success_response(
+            data=serializer.validated_data, status_code=status.HTTP_200_OK
+        )
 
 
 class LogOutAPIView(BadRequestSerializerMixin, APIView):
@@ -114,7 +114,8 @@ class LogOutAPIView(BadRequestSerializerMixin, APIView):
             token.blacklist()
         except Exception:
             return error_response(
-                error=ErrorObject.INVALID_TOKEN, status_code=status.HTTP_406_NOT_ACCEPTABLE
+                error=ErrorObject.INVALID_TOKEN,
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
         return success_response(data={}, status_code=status.HTTP_200_OK)
 
@@ -126,8 +127,8 @@ class UserProfileAPIView(BadRequestSerializerMixin, APIView):
         request=None,
         responses={200: UserProfileSerializer},
         auth=None,
-        operation_id='UserProfile',
-        tags=['Auth'],
+        operation_id="UserProfile",
+        tags=["Auth"],
     )
     def get(self, request):
         """
@@ -143,8 +144,8 @@ class UserProfileAPIView(BadRequestSerializerMixin, APIView):
         request=UserProfileInputSerializer,
         responses={204: {}},
         auth=None,
-        operation_id='UserProfileUpdate',
-        tags=['Auth'],
+        operation_id="UserProfileUpdate",
+        tags=["Auth"],
     )
     def patch(self, request):
         """
@@ -153,8 +154,7 @@ class UserProfileAPIView(BadRequestSerializerMixin, APIView):
         gender ==> `1:Male`, `2:Female`
         """
         user = request.user
-        serializer = UserProfileInputSerializer(
-            user, data=request.data, partial=True)
+        serializer = UserProfileInputSerializer(user, data=request.data, partial=True)
         if not serializer.is_valid():
             return error_response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         serializer.save()
@@ -168,8 +168,8 @@ class InstructorProfileAPIView(BadRequestSerializerMixin, APIView):
         request=InstructorSerializer,
         responses={204: {}},
         auth=None,
-        operation_id='InstructorProfileUpdate',
-        tags=['Auth'],
+        operation_id="InstructorProfileUpdate",
+        tags=["Auth"],
     )
     def patch(self, request):
         """
@@ -177,9 +177,9 @@ class InstructorProfileAPIView(BadRequestSerializerMixin, APIView):
         """
         instructor_obj = request.user.instructor
         serializer = InstructorSerializer(
-            instructor_obj, data=request.data, partial=True)
+            instructor_obj, data=request.data, partial=True
+        )
         if not serializer.is_valid():
             return error_response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
-    

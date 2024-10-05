@@ -1,15 +1,12 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from django.core.exceptions import ValidationError
+from rest_framework.views import APIView
 
-from schedule.api.v1.serializers import (
-    InstructorScheduleSerializer,
-    ScheduleSerializer
-)
-
+from schedule.api.v1.serializers import (InstructorScheduleSerializer,
+                                         ScheduleSerializer)
 from schedule.models import Schedule
 from users.models import Instructor
 from utils.api.error_objects import ErrorObject
@@ -25,7 +22,7 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
     def get_queryset(self):
         schedule_objs = Schedule.objects.filter(
             instructor=self.request.user.instructor
-        ).order_by('-day_of_week')
+        ).order_by("-day_of_week")
         return schedule_objs
 
     @extend_schema(
@@ -52,8 +49,7 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
         """
         instructor creates a new schedules
         """
-        serializer = ScheduleSerializer(
-            data=request.data)
+        serializer = ScheduleSerializer(data=request.data)
         if not serializer.is_valid():
             return self.serializer_error_response(serializer)
 
@@ -61,9 +57,12 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
             serializer.save(instructor=request.user.instructor)
         except ValidationError:
             return error_response(
-                error=ErrorObject.SCHEDULE_OVERLAPS, status_code=status.HTTP_406_NOT_ACCEPTABLE
+                error=ErrorObject.SCHEDULE_OVERLAPS,
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
-        return success_response(data=serializer.data, status_code=status.HTTP_201_CREATED)
+        return success_response(
+            data=serializer.data, status_code=status.HTTP_201_CREATED
+        )
 
 
 class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
@@ -80,12 +79,15 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
         """
         instructor gets a schedule details
         """
-        schedule_code = self.kwargs.get('schedule_code')
+        schedule_code = self.kwargs.get("schedule_code")
         try:
-            schedule_obj = Schedule.objects.get(code=schedule_code, instructor=request.user.instructor)
+            schedule_obj = Schedule.objects.get(
+                code=schedule_code, instructor=request.user.instructor
+            )
         except Schedule.DoesNotExist:
             return error_response(
-                error=ErrorObject.SCHEDULE_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.SCHEDULE_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
         response = InstructorScheduleSerializer(schedule_obj)
         return success_response(data=response.data, status_code=status.HTTP_200_OK)
@@ -94,24 +96,25 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
         request=ScheduleSerializer,
         responses={204: {}},
         auth=None,
-        operation_id='UpdateSchedule',
-        tags=['Schedule'],
+        operation_id="UpdateSchedule",
+        tags=["Schedule"],
     )
     def patch(self, request, *args, **kwargs):
         """
         instructor updates a schedule details
         """
-        schedule_code = self.kwargs.get('schedule_code')
+        schedule_code = self.kwargs.get("schedule_code")
         try:
             schedule_obj = Schedule.objects.get(
-                code=schedule_code, instructor=request.user.instructor)
+                code=schedule_code, instructor=request.user.instructor
+            )
         except Schedule.DoesNotExist:
             return error_response(
-                error=ErrorObject.SCHEDULE_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.SCHEDULE_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = ScheduleSerializer(
-            schedule_obj, data=request.data, partial=True)
+        serializer = ScheduleSerializer(schedule_obj, data=request.data, partial=True)
         if not serializer.is_valid():
             return self.serializer_error_response(serializer)
 
@@ -119,7 +122,8 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
             serializer.save()
         except ValidationError:
             return error_response(
-                error=ErrorObject.SCHEDULE_OVERLAPS, status_code=status.HTTP_406_NOT_ACCEPTABLE
+                error=ErrorObject.SCHEDULE_OVERLAPS,
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
@@ -135,13 +139,15 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
         """
         instructor delets a schedule details
         """
-        schedule_code = self.kwargs.get('schedule_code')
+        schedule_code = self.kwargs.get("schedule_code")
         try:
             schedule_obj = Schedule.objects.get(
-                code=schedule_code, instructor=request.user.instructor)
+                code=schedule_code, instructor=request.user.instructor
+            )
         except Schedule.DoesNotExist:
             return error_response(
-                error=ErrorObject.SCHEDULE_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.SCHEDULE_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
         schedule_obj.delete()
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
@@ -152,11 +158,10 @@ class ScheduleByInstructorAPIView(BadRequestSerializerMixin, ListAPIView):
     serializer_class = ScheduleSerializer
 
     def get_queryset(self):
-        instructor_obj = Instructor.objects.get(
-            id=self.kwargs.get('instructor_id'))
-        schedule_objs = Schedule.objects.filter(
-            instructor=instructor_obj
-        ).order_by('-day_of_week')
+        instructor_obj = Instructor.objects.get(id=self.kwargs.get("instructor_id"))
+        schedule_objs = Schedule.objects.filter(instructor=instructor_obj).order_by(
+            "-day_of_week"
+        )
         return schedule_objs
 
     @extend_schema(
@@ -174,4 +179,7 @@ class ScheduleByInstructorAPIView(BadRequestSerializerMixin, ListAPIView):
         try:
             return super().get(request, *args, **kwargs)
         except Instructor.DoesNotExist:
-            return error_response(error=ErrorObject.INSTRUCTOR_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND)
+            return error_response(
+                error=ErrorObject.INSTRUCTOR_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
+            )

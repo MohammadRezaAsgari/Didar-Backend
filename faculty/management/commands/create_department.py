@@ -11,5 +11,4 @@ class Command(BaseCommand):
             DataImporter.importer()
         except Exception as e:
             raise CommandError(e)
-        self.stdout.write(self.style.SUCCESS(
-            "Successfully import Department Data!"))
+        self.stdout.write(self.style.SUCCESS("Successfully import Department Data!"))

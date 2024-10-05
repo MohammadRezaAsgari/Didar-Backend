@@ -40,7 +40,8 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
                     "nullable": True,
                     "format": "uri",
                     "example": "http://api.example.org/accounts/?{offset_param}=400&{limit_param}=100".format(
-                        offset_param=self.offset_query_param, limit_param=self.limit_query_param
+                        offset_param=self.offset_query_param,
+                        limit_param=self.limit_query_param,
                     ),
                 },
                 "previous": {
@@ -48,7 +49,8 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
                     "nullable": True,
                     "format": "uri",
                     "example": "http://api.example.org/accounts/?{offset_param}=200&{limit_param}=100".format(
-                        offset_param=self.offset_query_param, limit_param=self.limit_query_param
+                        offset_param=self.offset_query_param,
+                        limit_param=self.limit_query_param,
                     ),
                 },
                 "results": schema,

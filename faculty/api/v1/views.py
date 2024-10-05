@@ -1,18 +1,15 @@
 from django.conf import settings
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 
-from faculty.api.v1.serializers import (
-    DepartmentSerializer,
-    FacultySerializer,
-    DepartmentDetailsSerializer,
-    FacultyDetailsSerializer,
-)
+from faculty.api.v1.serializers import (DepartmentDetailsSerializer,
+                                        DepartmentSerializer,
+                                        FacultyDetailsSerializer,
+                                        FacultySerializer)
 from faculty.models import Department, Faculty
-
 from users.api.v1.serializers import InstructorListSerializer
 from utils.api.error_objects import ErrorObject
 from utils.api.mixins import BadRequestSerializerMixin
@@ -53,12 +50,13 @@ class FacultyByIdAPIView(BadRequestSerializerMixin, APIView):
         """
         get a faculty details
         """
-        faculty_id = kwargs.get('faculty_id')
+        faculty_id = kwargs.get("faculty_id")
         try:
             faculty_obj = Faculty.objects.get(id=faculty_id)
         except Faculty.DoesNotExist:
             return error_response(
-                error=ErrorObject.FACULTY_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.FACULTY_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
         response = FacultyDetailsSerializer(faculty_obj)
         return success_response(data=response.data, status_code=status.HTTP_200_OK)
@@ -69,7 +67,7 @@ class FacultyDepartmentListAPIView(BadRequestSerializerMixin, ListAPIView):
     serializer_class = DepartmentSerializer
 
     def get_queryset(self):
-        faculty_id = self.kwargs.get('faculty_id')
+        faculty_id = self.kwargs.get("faculty_id")
         try:
             faculty_obj = Faculty.objects.get(id=faculty_id)
         except Faculty.DoesNotExist:
@@ -92,7 +90,8 @@ class FacultyDepartmentListAPIView(BadRequestSerializerMixin, ListAPIView):
             return super().get(request, *args, **kwargs)
         except Faculty.DoesNotExist:
             return error_response(
-                error=ErrorObject.FACULTY_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.FACULTY_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
 
 
@@ -110,12 +109,13 @@ class DepartmentByIdAPIView(BadRequestSerializerMixin, APIView):
         """
         get a department details
         """
-        department_id = kwargs.get('department_id')
+        department_id = kwargs.get("department_id")
         try:
             department_obj = Department.objects.get(id=department_id)
         except Department.DoesNotExist:
             return error_response(
-                error=ErrorObject.DEPARTMENT_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.DEPARTMENT_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
         response = DepartmentDetailsSerializer(department_obj)
         return success_response(data=response.data, status_code=status.HTTP_200_OK)
@@ -126,7 +126,7 @@ class DepartmentInstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
     serializer_class = InstructorListSerializer
 
     def get_queryset(self):
-        department_id = self.kwargs.get('department_id')
+        department_id = self.kwargs.get("department_id")
         try:
             department_obj = Department.objects.get(id=department_id)
         except Department.DoesNotExist:
@@ -149,5 +149,6 @@ class DepartmentInstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
             return super().get(request, *args, **kwargs)
         except Department.DoesNotExist:
             return error_response(
-                error=ErrorObject.DEPARTMENT_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
+                error=ErrorObject.DEPARTMENT_NOT_EXISTS,
+                status_code=status.HTTP_404_NOT_FOUND,
             )

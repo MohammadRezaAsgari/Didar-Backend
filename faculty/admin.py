@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from faculty.models import Faculty, Department
+from faculty.models import Department, Faculty
+
 
 class FacultyAdmin(admin.ModelAdmin):
     model = Faculty
@@ -8,6 +9,7 @@ class FacultyAdmin(admin.ModelAdmin):
         "id",
         "name",
     ]
+
 
 class DepartmentAdmin(admin.ModelAdmin):
     model = Department
@@ -17,6 +19,6 @@ class DepartmentAdmin(admin.ModelAdmin):
         "faculty",
     ]
 
+
 admin.site.register(Faculty, FacultyAdmin)
 admin.site.register(Department, DepartmentAdmin)
-

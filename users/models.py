@@ -1,21 +1,24 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.db import models
 
 from users.managers import CustomUserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=500, unique=True)
-    phone = models.CharField(max_length=255, null=True,
-                             blank=True, unique=True)
-    email = models.EmailField(
-        max_length=255, null=True, blank=True, unique=True)
+    phone = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    email = models.EmailField(max_length=255, null=True, blank=True, unique=True)
     password = models.CharField(max_length=128, null=True, blank=True)
     first_name = models.CharField(max_length=150, null=True, blank=True)
     last_name = models.CharField(max_length=150, null=True, blank=True)
 
     faculty = models.ForeignKey(
-        "faculty.Faculty", on_delete=models.SET_NULL, related_name="students", null=True, blank=True)
+        "faculty.Faculty",
+        on_delete=models.SET_NULL,
+        related_name="students",
+        null=True,
+        blank=True,
+    )
 
     GENDER_MALE = 1
     GENDER_FEMALE = 2
@@ -23,8 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         (GENDER_MALE, "Male"),
         (GENDER_FEMALE, "Female"),
     )
-    gender = models.PositiveSmallIntegerField(
-        choices=GENDERS, null=True, blank=True)
+    gender = models.PositiveSmallIntegerField(choices=GENDERS, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -38,21 +40,22 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_instructor(self):
         return hasattr(self, "instructor")
-    
+
     def get_full_name(self):
         return f"{self.first_name or ''} {self.last_name or ''}"
 
 
 class Instructor(models.Model):
     user = models.OneToOneField(
-        "users.User", on_delete=models.CASCADE, related_name="instructor")
+        "users.User", on_delete=models.CASCADE, related_name="instructor"
+    )
     bio = models.TextField(blank=True, null=True)
-    room_phone = models.CharField(max_length=255, null=True,
-                                  blank=True, unique=True)
+    room_phone = models.CharField(max_length=255, null=True, blank=True, unique=True)
     room_number = models.PositiveIntegerField(null=True, blank=True, unique=True)
     is_available_now = models.BooleanField(default=False)
     department = models.ForeignKey(
-        "faculty.Department", on_delete=models.CASCADE, related_name="instructors")
+        "faculty.Department", on_delete=models.CASCADE, related_name="instructors"
+    )
 
     def __str__(self):
         return f"{self.user.username}"
