@@ -21,3 +21,6 @@ class ErrorObject(dict, Enum):
     # Schedule app
     SCHEDULE_NOT_EXISTS = {'code': 2001, 'msg': 'SCHEDULE_NOT_EXISTS'}
     SCHEDULE_OVERLAPS = {'code': 2002, 'msg': 'SCHEDULE_OVERLAPS'}
+    # faculty app
+    FACULTY_NOT_EXISTS = {'code': 3001, 'msg': 'FACULTY_NOT_EXISTS'}
+    DEPARTMENT_NOT_EXISTS = {'code': 3002, 'msg': 'DEPARTMENT_NOT_EXISTS'}

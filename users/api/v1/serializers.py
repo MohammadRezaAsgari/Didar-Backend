@@ -65,6 +65,19 @@ class LogOutSerializer(serializers.Serializer):
     refresh = serializers.CharField(required=True)
 
 
+class InstructorListSerializer(serializers.ModelSerializer):
+    name = serializers.CharField()
+
+    class Meta:
+        model = Instructor
+        fields = [
+            'id',
+            'name',
+        ]
+
+    def get_name(self, obj):
+        return obj.user.get_full_name()
+
 class InstructorSerializer(serializers.ModelSerializer):
     department = DepartmentSerializer(read_only=True)
 

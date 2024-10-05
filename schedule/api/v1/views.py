@@ -73,8 +73,7 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
     def get(self, request, *args, **kwargs):
         schedule_code = self.kwargs.get('schedule_code')
         try:
-            # , instructor=request.user.instructor)
-            schedule_obj = Schedule.objects.get(code=schedule_code)
+            schedule_obj = Schedule.objects.get(code=schedule_code, instructor=request.user.instructor)
         except Schedule.DoesNotExist:
             return error_response(
                 error=ErrorObject.SCHEDULE_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
