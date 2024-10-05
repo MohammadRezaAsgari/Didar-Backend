@@ -37,6 +37,9 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Schedule"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        instructor gets list of their schedules
+        """
         return super().get(request, *args, **kwargs)
 
     @extend_schema(
@@ -46,6 +49,9 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Schedule"],
     )
     def post(self, request, *args, **kwargs):
+        """
+        instructor creates a new schedules
+        """
         serializer = ScheduleSerializer(
             data=request.data)
         if not serializer.is_valid():
@@ -71,6 +77,9 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
         tags=["Schedule"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        instructor gets a schedule details
+        """
         schedule_code = self.kwargs.get('schedule_code')
         try:
             schedule_obj = Schedule.objects.get(code=schedule_code, instructor=request.user.instructor)
@@ -89,6 +98,9 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
         tags=['Schedule'],
     )
     def patch(self, request, *args, **kwargs):
+        """
+        instructor updates a schedule details
+        """
         schedule_code = self.kwargs.get('schedule_code')
         try:
             schedule_obj = Schedule.objects.get(
@@ -120,6 +132,9 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
         tags=["Schedule"],
     )
     def delete(self, request, *args, **kwargs):
+        """
+        instructor delets a schedule details
+        """
         schedule_code = self.kwargs.get('schedule_code')
         try:
             schedule_obj = Schedule.objects.get(
@@ -153,6 +168,9 @@ class ScheduleByInstructorAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Schedule"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        authenticated and active users get an instructor schedules
+        """
         try:
             return super().get(request, *args, **kwargs)
         except Instructor.DoesNotExist:

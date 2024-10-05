@@ -33,6 +33,9 @@ class FacultyListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        get list of the faculties
+        """
         return super().get(request, *args, **kwargs)
 
 
@@ -47,6 +50,9 @@ class FacultyByIdAPIView(BadRequestSerializerMixin, APIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        get a faculty details
+        """
         faculty_id = kwargs.get('faculty_id')
         try:
             faculty_obj = Faculty.objects.get(id=faculty_id)
@@ -79,6 +85,9 @@ class FacultyDepartmentListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        get list of the departments of a faculty
+        """
         try:
             return super().get(request, *args, **kwargs)
         except Faculty.DoesNotExist:
@@ -98,6 +107,9 @@ class DepartmentByIdAPIView(BadRequestSerializerMixin, APIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        get a department details
+        """
         department_id = kwargs.get('department_id')
         try:
             department_obj = Department.objects.get(id=department_id)
@@ -130,6 +142,9 @@ class DepartmentInstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
         tags=["Faculty"],
     )
     def get(self, request, *args, **kwargs):
+        """
+        get list of the instructors of a department
+        """
         try:
             return super().get(request, *args, **kwargs)
         except Department.DoesNotExist:

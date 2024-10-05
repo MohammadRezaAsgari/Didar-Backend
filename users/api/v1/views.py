@@ -131,6 +131,8 @@ class UserProfileAPIView(BadRequestSerializerMixin, APIView):
     )
     def get(self, request):
         """
+        get user profile info
+
         gender ==> `1:Male`, `2:Female`
         """
         user = request.user
@@ -146,6 +148,8 @@ class UserProfileAPIView(BadRequestSerializerMixin, APIView):
     )
     def patch(self, request):
         """
+        update user info
+
         gender ==> `1:Male`, `2:Female`
         """
         user = request.user
@@ -168,6 +172,9 @@ class InstructorProfileAPIView(BadRequestSerializerMixin, APIView):
         tags=['Auth'],
     )
     def patch(self, request):
+        """
+        update instructor profile details
+        """
         instructor_obj = request.user.instructor
         serializer = InstructorSerializer(
             instructor_obj, data=request.data, partial=True)
