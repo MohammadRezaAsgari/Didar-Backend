@@ -38,6 +38,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_instructor(self):
         return hasattr(self, "instructor")
+    
+    def get_full_name(self):
+        return f"{self.first_name or ''} {self.last_name or ''}"
 
 
 class Instructor(models.Model):
@@ -50,7 +53,6 @@ class Instructor(models.Model):
     is_available_now = models.BooleanField(default=False)
     department = models.ForeignKey(
         "faculty.Department", on_delete=models.CASCADE, related_name="instructors")
-    # weekly_schedule
 
     def __str__(self):
         return f"{self.user.username}"
