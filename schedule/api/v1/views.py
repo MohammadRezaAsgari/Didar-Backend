@@ -3,6 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
+from django.core.exceptions import ValidationError
 
 from schedule.api.v1.serializers import (
     InstructorScheduleSerializer,
@@ -49,8 +50,13 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
             data=request.data)
         if not serializer.is_valid():
             return self.serializer_error_response(serializer)
-        serializer.save(instructor=request.user.instructor)
 
+        try:
+            serializer.save(instructor=request.user.instructor)
+        except ValidationError:
+            return error_response(
+                error=ErrorObject.SCHEDULE_OVERLAPS, status_code=status.HTTP_406_NOT_ACCEPTABLE
+            )
         return success_response(data=serializer.data, status_code=status.HTTP_201_CREATED)
 
 
@@ -92,11 +98,19 @@ class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
             return error_response(
                 error=ErrorObject.SCHEDULE_NOT_EXISTS, status_code=status.HTTP_404_NOT_FOUND
             )
+
         serializer = ScheduleSerializer(
             schedule_obj, data=request.data, partial=True)
         if not serializer.is_valid():
             return self.serializer_error_response(serializer)
-        serializer.save()
+
+        try:
+            serializer.save()
+        except ValidationError:
+            return error_response(
+                error=ErrorObject.SCHEDULE_OVERLAPS, status_code=status.HTTP_406_NOT_ACCEPTABLE
+            )
+
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(

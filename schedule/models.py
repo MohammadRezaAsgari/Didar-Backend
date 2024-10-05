@@ -3,6 +3,8 @@ import string
 
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 class Schedule(models.Model):
@@ -39,7 +41,22 @@ class Schedule(models.Model):
     def __str__(self):
         return f"{self.instructor.user.username} - {self.DAY_CHOICES[self.day_of_week - 1][1]}: {self.start_time} to {self.end_time}"
 
+    def clean(self):
+        # Check for overlapping schedules for the same instructor on the same day
+        overlapping_schedules = Schedule.objects.filter(
+            instructor=self.instructor,
+            day_of_week=self.day_of_week,
+        ).exclude(pk=self.pk).filter(
+            start_time__lt=self.end_time,
+            end_time__gt=self.start_time,
+        )
+        if overlapping_schedules.exists():
+            raise ValidationError(
+                _("This schedule overlaps with another schedule for the same instructor."))
+
+
     def save(self, *args, **kwargs):
+        self.clean()
         if not self.code:
             # Generate a unique code
             self.code = self._generate_unique_code()
