@@ -1,6 +1,6 @@
 from django.urls import path
 
-from users.api.v1.views import (CurrentWeekEventsListAPIView, )
+from eventcalendar.api.v1.views import CurrentWeekEventsListAPIView
 
 app_name = "v1"
 

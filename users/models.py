@@ -49,7 +49,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return f"{self.first_name or ''} {self.last_name or ''}"
 
-
     def get_current_week_range(self):
         now = datetime.utcnow()
         days_since_saturday = (now.weekday() + 2) % 7

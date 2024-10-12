@@ -1,11 +1,10 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
 
-
-from users.api.v1.serializers import (GoogleCalendarEventSerializer, )
+from eventcalendar.api.v1.serializers import GoogleCalendarEventSerializer
 from utils.api.error_objects import ErrorObject
 from utils.api.mixins import BadRequestSerializerMixin
 from utils.api.responses import error_response, success_response
@@ -43,5 +42,8 @@ class CurrentWeekEventsListAPIView(BadRequestSerializerMixin, ListAPIView):
         print(serializer.initial_data)
         if not serializer.is_valid():
             print(serializer.errors)
-            return error_response(error=ErrorObject.NOT_VALID_EVENTS_ERROR, status_code=status.HTTP_406_NOT_ACCEPTABLE)
+            return error_response(
+                error=ErrorObject.NOT_VALID_EVENTS_ERROR,
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            )
         return success_response(data=serializer.data, status_code=status.HTTP_200_OK)

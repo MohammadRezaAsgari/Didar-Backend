@@ -1,19 +1,17 @@
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema
+from google.auth.exceptions import RefreshError
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
-
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
-from google.auth.exceptions import RefreshError
 
-from users.api.v1.serializers import (GoogleAuthExistsSerializer, GoogleCalendarEventSerializer, InstructorSerializer,
+from users.api.v1.serializers import (InstructorSerializer,
                                       LoginOutputSerializer,
                                       LoginPasswordSerializer,
                                       LogOutSerializer,
@@ -206,15 +204,17 @@ class CheckGoogleAuthAPIView(BadRequestSerializerMixin, APIView):
         """
 
         user_social_auth: UserSocialAuth = UserSocialAuth.objects.filter(
-            user_id=request.user.id, provider='google-oauth2').exists()
+            user_id=request.user.id, provider="google-oauth2"
+        ).exists()
         if not user_social_auth:
             return success_response(
-                data={'google_credential_exist': False},
+                data={"google_credential_exist": False},
                 status_code=status.HTTP_200_OK,
             )
 
         user_social_auth = UserSocialAuth.objects.get(
-            user_id=request.user.id, provider='google-oauth2')
+            user_id=request.user.id, provider="google-oauth2"
+        )
         if user_social_auth.access_token_expired():
             try:
                 # Load strategy and backend
@@ -226,17 +226,17 @@ class CheckGoogleAuthAPIView(BadRequestSerializerMixin, APIView):
                 # Update the access token and expiration time
                 user_social_auth.save()
                 return success_response(
-                    data={'google_credential_exist': True},
+                    data={"google_credential_exist": True},
                     status_code=status.HTTP_200_OK,
                 )
 
             except RefreshError as e:
                 return success_response(
-                    data={'google_credential_exist': False},
+                    data={"google_credential_exist": False},
                     status_code=status.HTTP_200_OK,
                 )
 
         return success_response(
-            data={'google_credential_exist': True},
+            data={"google_credential_exist": True},
             status_code=status.HTTP_200_OK,
         )
