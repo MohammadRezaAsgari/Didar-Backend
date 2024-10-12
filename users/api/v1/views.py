@@ -1,16 +1,19 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.shortcuts import redirect
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from users.api.v1.serializers import (InstructorSerializer,
+from social_django.models import UserSocialAuth
+from social_django.utils import load_strategy
+from google.auth.exceptions import RefreshError
+
+from users.api.v1.serializers import (GoogleAuthExistsSerializer, GoogleCalendarEventSerializer, InstructorSerializer,
                                       LoginOutputSerializer,
                                       LoginPasswordSerializer,
                                       LogOutSerializer,
@@ -186,25 +189,54 @@ class InstructorProfileAPIView(BadRequestSerializerMixin, APIView):
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
 
 
-class GoogleLoginAPIView(BadRequestSerializerMixin, APIView):
+class CheckGoogleAuthAPIView(BadRequestSerializerMixin, APIView):
     permission_classes = [IsAuthenticatedAndActive, IsInstructor]
 
     @extend_schema(
         request=None,
-        responses=None,
-        parameters=[
-            OpenApiParameter(name='next', type=str, required=True),
-        ],
-        operation_id="GoogleLogin",
+        parameters=[],
+        responses={200: GoogleAuthExistsSerializer},
+        auth=None,
+        operation_id="GoogleAuthExists",
         tags=["Auth"],
     )
     def get(self, request, *args, **kwargs):
-        # Capture the 'next' parameter from the query string
-        next_url = request.GET.get('next', '')
+        """
+        Check if Google Credential exists.
+        """
 
-        # Store the next URL in the session
-        if next_url:
-            request.session['next'] = next_url
+        user_social_auth: UserSocialAuth = UserSocialAuth.objects.filter(
+            user_id=request.user.id, provider='google-oauth2').exists()
+        if not user_social_auth:
+            return success_response(
+                data={'google_credential_exist': False},
+                status_code=status.HTTP_200_OK,
+            )
 
-        # Redirect to the Google OAuth2 authentication URL
-        return redirect('social:begin', 'google-oauth2')
+        user_social_auth = UserSocialAuth.objects.get(
+            user_id=request.user.id, provider='google-oauth2')
+        if user_social_auth.access_token_expired():
+            try:
+                # Load strategy and backend
+                strategy = load_strategy(request)
+
+                # Refresh the token
+                user_social_auth.refresh_token(strategy=strategy)
+
+                # Update the access token and expiration time
+                user_social_auth.save()
+                return success_response(
+                    data={'google_credential_exist': True},
+                    status_code=status.HTTP_200_OK,
+                )
+
+            except RefreshError as e:
+                return success_response(
+                    data={'google_credential_exist': False},
+                    status_code=status.HTTP_200_OK,
+                )
+
+        return success_response(
+            data={'google_credential_exist': True},
+            status_code=status.HTTP_200_OK,
+        )

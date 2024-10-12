@@ -18,6 +18,10 @@ class ErrorObject(dict, Enum):
     USER_NOT_FOUND = {"code": 1103, "msg": "USER_NOT_FOUND"}
     USER_NOT_SET_PASSWORD = {"code": 1104, "msg": "USER_NOT_SET_PASSWORD"}
     INSTRUCTOR_NOT_EXISTS = {"code": 1105, "msg": "INSTRUCTOR_NOT_EXISTS"}
+    GOOGLE_CREDENTIAL_NOT_FOUND = {"code": 1106,
+                                   "msg": "GOOGLE_CREDENTIAL_NOT_FOUND"}
+    NOT_VALID_EVENTS_ERROR = {"code": 1107,
+                                   "msg": "NOT_VALID_EVENTS_ERROR"}
     # Schedule app
     SCHEDULE_NOT_EXISTS = {"code": 2001, "msg": "SCHEDULE_NOT_EXISTS"}
     SCHEDULE_OVERLAPS = {"code": 2002, "msg": "SCHEDULE_OVERLAPS"}

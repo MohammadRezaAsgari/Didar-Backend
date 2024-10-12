@@ -1,14 +1,15 @@
 from django.urls import path
 
-from users.api.v1.views import (DecoratedRefreshTokenView, GoogleLoginAPIView,
+from users.api.v1.views import (DecoratedRefreshTokenView, CheckGoogleAuthAPIView,
                                 InstructorProfileAPIView, LoginPasswordAPIView,
-                                LogOutAPIView, UserProfileAPIView)
+                                LogOutAPIView, UserProfileAPIView, CurrentWeekEventsListAPIView)
 
 app_name = "v1"
 
 urlpatterns = [
     # AUTH URLS
-    path("auth/google-login/", GoogleLoginAPIView.as_view(), name="google_login"),
+    path('auth/check-google-auth-exist/',
+         CheckGoogleAuthAPIView.as_view(), name='check_google_auth'),
     # Login flow API
     path("auth/login-password/", LoginPasswordAPIView.as_view(), name="login_password"),
     # --
