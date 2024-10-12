@@ -138,3 +138,7 @@ class UserProfileInputSerializer(serializers.ModelSerializer):
             "last_name",
             "gender",
         ]
+
+class GoogleAuthExistsSerializer(serializers.Serializer):
+    google_credential_exist = serializers.BooleanField()
+

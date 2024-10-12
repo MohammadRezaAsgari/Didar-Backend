@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from social_django.models import UserSocialAuth
 from social_django.utils import load_strategy
 
-from users.api.v1.serializers import (InstructorSerializer,
+from users.api.v1.serializers import (GoogleAuthExistsSerializer, InstructorSerializer,
                                       LoginOutputSerializer,
                                       LoginPasswordSerializer,
                                       LogOutSerializer,
