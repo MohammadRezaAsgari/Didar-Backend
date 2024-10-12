@@ -35,8 +35,7 @@ class Schedule(models.Model):
     updated_at = models.DateField(auto_now=True)
 
     class Meta:
-        unique_together = ("instructor", "day_of_week",
-                           "start_time", "end_time")
+        unique_together = ("instructor", "day_of_week", "start_time", "end_time")
 
     def __str__(self):
         return f"{self.instructor.user.username} - {self.DAY_CHOICES[self.day_of_week - 1][1]}: {self.start_time} to {self.end_time}"
