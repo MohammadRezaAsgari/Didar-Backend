@@ -37,4 +37,5 @@ urlpatterns = [
     path("api/", include("users.urls", namespace="users")),
     path("api/", include("schedule.urls", namespace="schedule")),
     path("api/", include("faculty.urls", namespace="faculty")),
+    path("api/", include("eventcalendar.urls", namespace="eventcalendar")),
 ]
