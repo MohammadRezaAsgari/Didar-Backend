@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
+from django.shortcuts import redirect
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -183,3 +184,27 @@ class InstructorProfileAPIView(BadRequestSerializerMixin, APIView):
             return error_response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return success_response(data={}, status_code=status.HTTP_204_NO_CONTENT)
+
+
+class GoogleLoginAPIView(BadRequestSerializerMixin, APIView):
+    permission_classes = [IsAuthenticatedAndActive, IsInstructor]
+
+    @extend_schema(
+        request=None,
+        responses=None,
+        parameters=[
+            OpenApiParameter(name='next', type=str, required=True),
+        ],
+        operation_id="GoogleLogin",
+        tags=["Auth"],
+    )
+    def get(self, request, *args, **kwargs):
+        # Capture the 'next' parameter from the query string
+        next_url = request.GET.get('next', '')
+
+        # Store the next URL in the session
+        if next_url:
+            request.session['next'] = next_url
+
+        # Redirect to the Google OAuth2 authentication URL
+        return redirect('social:begin', 'google-oauth2')

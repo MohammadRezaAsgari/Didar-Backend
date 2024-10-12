@@ -1,6 +1,6 @@
 from django.urls import path
 
-from users.api.v1.views import (DecoratedRefreshTokenView,
+from users.api.v1.views import (DecoratedRefreshTokenView, GoogleLoginAPIView,
                                 InstructorProfileAPIView, LoginPasswordAPIView,
                                 LogOutAPIView, UserProfileAPIView)
 
@@ -8,6 +8,7 @@ app_name = "v1"
 
 urlpatterns = [
     # AUTH URLS
+    path("auth/google-login/", GoogleLoginAPIView.as_view(), name="google_login"),
     # Login flow API
     path("auth/login-password/", LoginPasswordAPIView.as_view(), name="login_password"),
     # --
