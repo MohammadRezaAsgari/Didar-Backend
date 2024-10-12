@@ -16,7 +16,7 @@ from utils.permissions import IsAuthenticatedAndActive, IsInstructor
 
 
 class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
-    permission_classes = [IsInstructor]
+    permission_classes = [IsAuthenticatedAndActive ,IsInstructor]
     serializer_class = InstructorScheduleSerializer
 
     def get_queryset(self):
@@ -66,7 +66,7 @@ class InstructorScheduleListAPIView(BadRequestSerializerMixin, ListAPIView):
 
 
 class InstructorScheduleByIdAPIView(BadRequestSerializerMixin, APIView):
-    permission_classes = [IsInstructor]
+    permission_classes = [IsAuthenticatedAndActive, IsInstructor]
 
     @extend_schema(
         request=None,

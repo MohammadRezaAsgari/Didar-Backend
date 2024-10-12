@@ -20,6 +20,6 @@ urlpatterns = [
     path(
         "instructor/<int:instructor_id>/schedules/",
         ScheduleByInstructorAPIView.as_view(),
-        name="schedule",
+        name="schedule_list_by_instructor",
     ),
 ]

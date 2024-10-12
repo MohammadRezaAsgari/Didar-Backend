@@ -1,26 +1,28 @@
 import factory
-from django.contrib.auth import get_user_model
+from datetime import datetime, timedelta
 from faker import Faker
+
+from schedule.models import Schedule
+from users.factories import InstructorFactory
 
 fake = Faker()
 
 
-# class UserFactory(factory.django.DjangoModelFactory):
-#     email = factory.Faker("email")
-#     password = factory.PostGenerationMethodCall("set_password", "dolphins")
-#     username = factory.Faker("user_name")
-#     first_name = factory.Faker("first_name")
-#     last_name = factory.Faker("last_name")
-#     phone = factory.Sequence(lambda n: f"+989123456{n:03}")
+class ScheduleFactory(factory.django.DjangoModelFactory):
+    title = factory.Faker("word")
+    instructor = factory.SubFactory(InstructorFactory)
+    day_of_week = factory.Iterator([Schedule.DAY_SATURDAY, Schedule.DAY_SUNDAY, Schedule.DAY_MONDAY,
+                                    Schedule.DAY_TUESDAY, Schedule.DAY_WEDNESDAY, Schedule.DAY_THURSDAY])
+    start_time = factory.Faker("time_object")
+    end_time = factory.Faker("time_object")
 
-#     class Meta:
-#         model = User
-#         django_get_or_create = ("email", "phone", "username")
+    @factory.lazy_attribute
+    def end_time(self):
+        # Ensures end_time is always after start_time
+        start = self.start_time
+        end = (datetime.combine(datetime.today(), start) +
+               timedelta(hours=1)).time()
+        return end
 
-
-# class InstructorFactory(factory.django.DjangoModelFactory):
-#     department = factory.SubFactory(DepartmentFactory)
-#     user = factory.SubFactory(UserFactory)
-
-#     class Meta:
-#         model = Instructor
+    class Meta:
+        model = Schedule
