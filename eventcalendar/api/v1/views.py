@@ -11,7 +11,7 @@ from utils.api.responses import error_response, success_response
 from utils.permissions import IsAuthenticatedAndActive, IsInstructor
 
 
-class CurrentWeekEventsListAPIView(BadRequestSerializerMixin, ListAPIView):
+class InstructorEventsListAPIView(BadRequestSerializerMixin, ListAPIView):
     permission_classes = [IsAuthenticatedAndActive, IsInstructor]
 
     @extend_schema(
