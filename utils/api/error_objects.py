@@ -12,6 +12,7 @@ class ErrorObject(dict, Enum):
     INVALID_PASSWORD = {"code": 1007, "msg": "INVALID_PASSWORD"}
     INVALID_TOKEN = {"code": 1008, "msg": "INVALID_TOKEN"}
     SERVER_ERROR = {"code": 1009, "msg": "SERVER_ERROR"}
+    SERVICE_UNAVAILABLE = {"code": 1010, "msg": "SERVICE_UNAVAILABLE"}
     # User app
     USER_ALREADY_EXISTS = {"code": 1101, "msg": "USER_ALREADY_EXISTS"}
     USER_NOT_ACTIVE = {"code": 1102, "msg": "USER_NOT_ACTIVE"}

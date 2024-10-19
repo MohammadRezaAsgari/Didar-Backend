@@ -5,8 +5,13 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 from users.managers import CustomUserManager
+from utils.api.error_objects import ErrorObject
+from utils.helpers import convert_datetime_timezone
+from utils.loggers import stdout_logger
+from utils.validators import CustomValidationError
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -75,20 +80,94 @@ class User(AbstractBaseUser, PermissionsMixin):
         service = build("calendar", "v3", credentials=credentials)
 
         time_min, time_max = self.get_current_week_range()
-        events_result = (
-            service.events()
-            .list(
-                calendarId="primary",
-                timeMin=time_min,  # From now (to exclude past events)
-                timeMax=time_max,  # Until Thursday
-                singleEvents=True,
-                orderBy="startTime",
+
+        stdout_logger.info(f"Geting {self.username} events from google calender...")
+        try:
+            events_result = (
+                service.events()
+                .list(
+                    calendarId="primary",
+                    timeMin=time_min,  # From now (to exclude past events)
+                    timeMax=time_max,  # Until Thursday
+                    singleEvents=True,
+                    orderBy="startTime",
+                )
+                .execute()
             )
-            .execute()
-        )
+        except HttpError as error:
+            # Catch the HttpError
+            error_details = error.content.decode("utf-8")
+            stdout_logger.error(f"Get f{self.username} faild.{error_details}")
+            raise CustomValidationError(
+                detail=error_details,
+                error_object=ErrorObject.SERVICE_UNAVAILABLE,
+            )
 
         events = events_result.get("items", [])
         return events
+
+    def create_google_calendar_event(
+        self, summary, start, end, attendees_emails, time_zone="Asia/Tehran"
+    ):
+        social_user = self.social_auth.get(provider="google-oauth2")
+
+        credentials = Credentials(
+            token=social_user.extra_data["access_token"],
+            refresh_token=social_user.extra_data["refresh_token"],
+            client_id=settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
+            client_secret=settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET,
+            token_uri="https://oauth2.googleapis.com/token",
+        )
+
+        service = build("calendar", "v3", credentials=credentials)
+
+        event = {
+            "summary": summary,
+            "start": {
+                "dateTime": convert_datetime_timezone(start, time_zone),
+                "timeZone": time_zone,
+            },
+            "end": {
+                "dateTime": convert_datetime_timezone(end, time_zone),
+                "timeZone": time_zone,
+            },
+            "attendees": [{"email": email} for email in attendees_emails],
+            "reminders": {
+                "useDefault": False,
+                "overrides": [
+                    {"method": "email", "minutes": 24 * 60},
+                    {"method": "popup", "minutes": 10},
+                ],
+            },
+            "conferenceData": {
+                "createRequest": {
+                    "requestId": "7qxalsvy0e",
+                    "conferenceSolutionKey": {"type": "hangoutsMeet"},
+                }
+            },
+        }
+
+        stdout_logger.info(f"Creating event for {self.username} by google calender...")
+        try:
+            # Create the event with Google Meet conference data
+            created_event = (
+                service.events()
+                .insert(calendarId="primary", body=event, conferenceDataVersion=1)
+                .execute()
+            )
+
+            return created_event
+
+        except HttpError as error:
+            # Catch the HttpError
+            error_details = error.content.decode("utf-8")
+            stdout_logger.error(
+                f"Creating event for f{self.username} faild.{error_details}"
+            )
+            raise CustomValidationError(
+                detail=error_details,
+                error_object=ErrorObject.BAD_REQUEST,
+            )
 
 
 class Instructor(models.Model):
