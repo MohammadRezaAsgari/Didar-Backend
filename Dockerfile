@@ -14,4 +14,10 @@ COPY .env .env
 RUN python manage.py collectstatic --noinput
 #RUN python manage.py migrate
 
-CMD ["gunicorn", "--bind", ":8000", "didar.wsgi:application"]
+#CMD ["gunicorn", "--bind", ":8000", "didar.wsgi:application"]
+
+COPY start.sh /start.sh
+
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
