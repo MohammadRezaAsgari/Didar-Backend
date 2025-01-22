@@ -66,7 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return time_min, time_max
 
     def get_google_calendar_events(self):
-        social_user = self.social_auth.get(provider="google-oauth2")
+        social_user = self.social_auth.filter(provider="google-oauth2").last()
 
         credentials = Credentials(
             token=social_user.extra_data["access_token"],
@@ -109,7 +109,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def create_google_calendar_event(
         self, summary, start, end, attendees_emails, time_zone="Asia/Tehran"
     ):
-        social_user = self.social_auth.get(provider="google-oauth2")
+        social_user = self.social_auth.filter(provider="google-oauth2").last()
 
         credentials = Credentials(
             token=social_user.extra_data["access_token"],

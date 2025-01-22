@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema
-from google.auth.exceptions import RefreshError
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -213,29 +212,28 @@ class CheckGoogleAuthAPIView(BadRequestSerializerMixin, APIView):
                 status_code=status.HTTP_200_OK,
             )
 
-        user_social_auth = UserSocialAuth.objects.get(
+        user_social_auth = UserSocialAuth.objects.filter(
             user_id=request.user.id, provider="google-oauth2"
-        )
-        if user_social_auth.access_token_expired():
-            try:
-                # Load strategy and backend
-                strategy = load_strategy(request)
+        ).last()
+        try:
+            if user_social_auth.access_token_expired():
+                    # Load strategy and backend
+                    strategy = load_strategy(request)
 
-                # Refresh the token
-                user_social_auth.refresh_token(strategy=strategy)
+                    # Refresh the token
+                    user_social_auth.refresh_token(strategy=strategy)
 
-                # Update the access token and expiration time
-                user_social_auth.save()
-                return success_response(
-                    data={"google_credential_exist": True},
-                    status_code=status.HTTP_200_OK,
-                )
-
-            except RefreshError as e:
-                return success_response(
-                    data={"google_credential_exist": False},
-                    status_code=status.HTTP_200_OK,
-                )
+                    # Update the access token and expiration time
+                    user_social_auth.save()
+                    return success_response(
+                        data={"google_credential_exist": True},
+                        status_code=status.HTTP_200_OK,
+                    )
+        except Exception:
+            return success_response(
+                data={"google_credential_exist": False},
+                status_code=status.HTTP_200_OK,
+            )
 
         return success_response(
             data={"google_credential_exist": True},

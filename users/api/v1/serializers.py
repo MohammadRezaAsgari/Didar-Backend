@@ -97,7 +97,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.SerializerMethodField(source="get_phone")
     gender = serializers.IntegerField(help_text="ENUM  `1:Male`, `2:Female`")
     instructor = InstructorSerializer(read_only=True)
-    faculty = FacultySerializer(read_only=True)
 
     class Meta:
         model = User
@@ -109,7 +108,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "gender",
             "is_instructor",
             "instructor",
-            "faculty",
         ]
 
     def get_phone(self, obj):

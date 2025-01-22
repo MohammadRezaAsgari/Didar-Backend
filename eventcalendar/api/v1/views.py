@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from social_django.models import UserSocialAuth
+from google.auth.exceptions import RefreshError
 
 from eventcalendar.api.v1.serializers import (
     GoogleCalendarEventInputSerializer, GoogleCalendarEventSerializer)
@@ -32,7 +32,7 @@ class InstructorEventsListAPIView(BadRequestSerializerMixin, ListAPIView):
         user_obj = request.user
         try:
             events_list = user_obj.get_google_calendar_events()
-        except UserSocialAuth:
+        except RefreshError:
             return error_response(
                 error=ErrorObject.GOOGLE_CREDENTIAL_NOT_FOUND,
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -75,6 +75,11 @@ class InstructorEventsListAPIView(BadRequestSerializerMixin, ListAPIView):
                 end=serializer.validated_data.get("end").get("dateTime"),
                 attendees_emails=serializer.validated_data.get("attendees_emails", []),
                 time_zone=serializer.validated_data.get("start").get("timeZone"),
+            )
+        except RefreshError:
+            return error_response(
+                error=ErrorObject.GOOGLE_CREDENTIAL_NOT_FOUND,
+                status_code=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
             return error_response(
