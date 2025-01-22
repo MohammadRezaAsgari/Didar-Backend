@@ -3,7 +3,7 @@ FROM python:3.9.5
 COPY requirements.txt /tmp/
 RUN pip install --upgrade pip && pip install --no-cache-dir -r /tmp/requirements.txt
 
-WORKDIR /home/phanoos/phanoos-backend
+WORKDIR /home/didar/didar-backend
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
