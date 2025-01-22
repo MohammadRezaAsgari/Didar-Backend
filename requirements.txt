@@ -12,6 +12,8 @@ django-debug-toolbar==3.2.4
 django-extensions==3.2.3
 djangorestframework==3.12.4
 djangorestframework-simplejwt==5.0.0
+django-model-utils==4.3.1
+django-filter==23.2
 drf-spectacular==0.21.0
 drf-spectacular-sidecar==2021.11.29
 factory-boy==3.2.0
