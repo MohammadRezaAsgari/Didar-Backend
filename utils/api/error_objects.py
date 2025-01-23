@@ -27,3 +27,5 @@ class ErrorObject(dict, Enum):
     # faculty app
     FACULTY_NOT_EXISTS = {"code": 3001, "msg": "FACULTY_NOT_EXISTS"}
     DEPARTMENT_NOT_EXISTS = {"code": 3002, "msg": "DEPARTMENT_NOT_EXISTS"}
+    # ticket app
+    TICKET_NOT_FOUND = {"code": 4001, "msg": "TICKET_NOT_FOUND"}

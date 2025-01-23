@@ -36,9 +36,9 @@ class TicketListAPIView(BadRequestSerializerMixin, ListAPIView):
         "status",
     ]
     ordering_fields = [
-        "created_at",
+        "created",
     ]
-    ordering = ["-created_at"]
+    ordering = ["-created"]
 
     def get_queryset(self):
         qs = self.request.user.tickets.all()
@@ -130,7 +130,7 @@ class TicketByIDAPIView(BadRequestSerializerMixin, APIView):
         return success_response(data=None, status_code=status.HTTP_201_CREATED)
 
 
-class InstructorTicketByIDAPIView(BadRequestSerializerMixin, ListAPIView):
+class InstructorTicketListAPIView(BadRequestSerializerMixin, ListAPIView):
     """
     Get list of all tickets for Instructor with filtering on status
 
@@ -142,15 +142,15 @@ class InstructorTicketByIDAPIView(BadRequestSerializerMixin, ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = [
         "status",
-        "assigned_to",
     ]
     ordering_fields = [
-        "created_at",
+        "created",
     ]
-    ordering = ["-created_at"]
+    ordering = ["-created"]
 
     def get_queryset(self):
-        return Ticket.objects.all()
+        qs = self.request.user.instructor.tickets.all()
+        return qs
 
     @extend_schema(
         request=None,
@@ -163,11 +163,12 @@ class InstructorTicketByIDAPIView(BadRequestSerializerMixin, ListAPIView):
         return super().get(request, *args, **kwargs)
 
 
-class InstructorTicketListAPIView(BadRequestSerializerMixin, APIView):
+class InstructorTicketByIDAPIView(BadRequestSerializerMixin, APIView):
     permission_classes = [IsInstructor]
 
     def get_object(self):
-        return Ticket.objects.get(id=self.kwargs.get("ticket_id"))
+        qs = self.request.user.instructor.tickets.get(id=self.kwargs.get("ticket_id"))
+        return qs
 
     @extend_schema(
         request=None,
@@ -220,9 +221,8 @@ class InstructorTicketListAPIView(BadRequestSerializerMixin, APIView):
         )
         if not serializer.is_valid():
             return self.serializer_error_response(serializer)
-        ticket_message_instance = serializer.save()
-        ticket_message_instance.send_answering_email()
 
+        serializer.save()
         return success_response(data=None, status_code=status.HTTP_201_CREATED)
 
     @extend_schema(
