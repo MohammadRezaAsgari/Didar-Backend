@@ -124,6 +124,7 @@ local_req.txt
 cert/
 static
 /media/
+/didar/media/
 /node_modules
 user_pickle_files/
 docker-entrypoint.sh

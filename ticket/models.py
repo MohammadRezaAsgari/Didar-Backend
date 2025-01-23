@@ -9,7 +9,7 @@ from utils.helpers import create_random_digits, get_hash
 
 
 def attachment_path(instance, filename):
-    return f"media/ticket_attachment/{get_hash(str(instance.id))}/{get_hash(filename)}{Path(filename).suffix.strip()}"
+    return f"ticket_attachment/{get_hash(str(instance.id))}/{get_hash(filename)}{Path(filename).suffix.strip()}"
 
 
 class Ticket(TimeStampedModel):
