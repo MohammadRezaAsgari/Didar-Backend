@@ -16,6 +16,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_beat",
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
@@ -299,4 +301,40 @@ LOGGING = {
             "propagate": True,
         },
     },
+}
+
+# Redis
+REDIS_HOST = os.environ.get("REDIS_HOST")
+REDIS_USER = os.environ.get("REDIS_USER")
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
+REDIS_PORT = os.environ.get("REDIS_PORT")
+REDIS_DB = os.environ.get("REDIS_DB")
+REDIS_URL = os.environ.get("REDIS_URL")
+
+# Celery
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_BEAT_SCHEDULE = {
+    "check_instructors_meetings": {
+        "task": "users.tasks.check_instructors_meetings",
+        "schedule": crontab(minute=0),  # Executes every minute
+    },
+}
+
+# Cache settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": REDIS_PASSWORD,
+            "SOCKET_CONNECT_TIMEOUT": 4,
+            "SOCKET_TIMEOUT": 4,
+        },
+        "KEY_PREFIX": "bong",
+    }
 }

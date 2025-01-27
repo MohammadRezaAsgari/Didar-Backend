@@ -33,8 +33,51 @@ services:
     networks:
       - didar-net
 
+  didar-redis:
+    image: redis:6.2
+    restart: always
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    volumes:
+      - didar_redis_data:/data
+    networks:
+      - didar-net
+
+  celery-worker:
+    build: .
+    command: celery -A didar.celery_conf worker --loglevel=info
+    volumes:
+      - .:/home/didar/didar-backend
+    depends_on:
+      - didar-redis
+      - didar-db
+    env_file:
+      - .env
+    networks:
+      - didar-net
+    tty: true
+    stdin_open: true
+
+  celery-beat:
+    build: .
+    command: celery -A didar.celery_conf beat --loglevel=info
+    volumes:
+      - .:/home/didar/didar-backend
+    depends_on:
+      - didar-redis
+      - didar-db
+    env_file:
+      - .env
+    networks:
+      - didar-net
+    tty: true
+    stdin_open: true
+
 volumes:
   didar_postgres_data_storage:
+  didar_redis_data:
 
 networks:
   didar-net:
