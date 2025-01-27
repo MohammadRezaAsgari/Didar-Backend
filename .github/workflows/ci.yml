@@ -46,6 +46,8 @@ jobs:
       POSTGRES_PORT: 5432
       REDIS_HOST: localhost
       REDIS_PORT: 6379
+      REDIS_USER: default
+      REDIS_PASSWORD: p6h5a4n3o2o1s
       DJANGO_SETTINGS_MODULE: didar.settings.development
 
     steps:
