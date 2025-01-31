@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -9,9 +10,13 @@ from googleapiclient.errors import HttpError
 
 from users.managers import CustomUserManager
 from utils.api.error_objects import ErrorObject
-from utils.helpers import convert_datetime_timezone
+from utils.helpers import convert_datetime_timezone, get_hash
 from utils.loggers import stdout_logger
 from utils.validators import CustomValidationError
+
+
+def profile_photo_path(instance, filename):
+    return f"instructor-photo/{get_hash(str(instance.id))}/{get_hash(filename)}{Path(filename).suffix.strip()}"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -180,6 +185,10 @@ class Instructor(models.Model):
     is_available_now = models.BooleanField(default=False)
     department = models.ForeignKey(
         "faculty.Department", on_delete=models.CASCADE, related_name="instructors"
+    )
+    rank = models.CharField(max_length=55, null=True, blank=True)
+    profile_photo = models.FileField(
+        upload_to=profile_photo_path, null=True, blank=True
     )
 
     def __str__(self):

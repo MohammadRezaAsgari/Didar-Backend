@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,6 +17,7 @@ class LoginPasswordSerializer(serializers.Serializer):
 class LoginOutputSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(read_only=True)
     gender = serializers.IntegerField(help_text="ENUM  `1:Male`, `2:Female`")
+    profile_photo = serializers.SerializerMethodField(source="get_profile_photo")
     access = serializers.SerializerMethodField()
     refresh = serializers.SerializerMethodField()
     access_token_expires_at = serializers.SerializerMethodField()
@@ -44,6 +46,13 @@ class LoginOutputSerializer(serializers.ModelSerializer):
         )
         return expiration_timestamp
 
+    def get_profile_photo(self, obj):
+        if obj.is_instructor:
+            if not obj.instructor.profile_photo:
+                return None
+            return settings.BACKEND_URL + obj.instructor.profile_photo.url
+        return None
+
     class Meta:
         model = User
         fields = [
@@ -58,6 +67,7 @@ class LoginOutputSerializer(serializers.ModelSerializer):
             "refresh",
             "access_token_expires_at",
             "is_instructor",
+            "profile_photo",
         ]
 
 
@@ -73,6 +83,8 @@ class InstructorListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "profile_photo",
+            "rank",
         ]
 
     def get_name(self, obj):
@@ -90,6 +102,7 @@ class InstructorSerializer(serializers.ModelSerializer):
             "room_number",
             "is_available_now",
             "department",
+            "profile_photo",
         ]
 
 

@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from ticket.models import Attachment, Ticket, TicketMessage
-from users.api.v1.serializers import UserProfileSerializer
+from users.api.v1.serializers import InstructorListSerializer, UserProfileSerializer
 from users.models import Instructor
 
 
@@ -115,6 +115,8 @@ class InputTicketSerializer(serializers.ModelSerializer):
 
 
 class OutputTicketListSerializer(serializers.ModelSerializer):
+    instructor = InstructorListSerializer()
+
     class Meta:
         model = Ticket
         fields = (
@@ -123,6 +125,7 @@ class OutputTicketListSerializer(serializers.ModelSerializer):
             "created",
             "title",
             "status",
+            "instructor",
         )
 
 
@@ -171,6 +174,7 @@ class OutputTicketMessageSerializer(serializers.ModelSerializer):
 
 class OutputTicketDetailSerializer(serializers.ModelSerializer):
     messages = serializers.SerializerMethodField()
+    instructor = InstructorListSerializer()
 
     class Meta:
         model = Ticket
@@ -179,6 +183,7 @@ class OutputTicketDetailSerializer(serializers.ModelSerializer):
             "ticket_number",
             "created",
             "title",
+            "instructor",
             "status",
             "messages",
         )
