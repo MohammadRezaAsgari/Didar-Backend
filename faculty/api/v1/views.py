@@ -4,16 +4,19 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
 
 from faculty.api.v1.serializers import (DepartmentDetailsSerializer,
                                         DepartmentSerializer,
                                         FacultyDetailsSerializer,
                                         FacultySerializer)
 from faculty.models import Department, Faculty
-from users.api.v1.serializers import InstructorListSerializer
+from users.api.v1.serializers import InstructorListSerializer, InstructorSerializer
+from users.models import Instructor
 from utils.api.error_objects import ErrorObject
 from utils.api.mixins import BadRequestSerializerMixin
 from utils.api.responses import error_response, success_response
+from utils.permissions import IsAuthenticatedAndActive
 
 
 class FacultyListAPIView(BadRequestSerializerMixin, ListAPIView):
@@ -152,3 +155,56 @@ class DepartmentInstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
                 error=ErrorObject.DEPARTMENT_NOT_EXISTS,
                 status_code=status.HTTP_404_NOT_FOUND,
             )
+
+
+class InstructorListAPIView(BadRequestSerializerMixin, ListAPIView):
+    permission_classes = [IsAuthenticatedAndActive]
+    serializer_class = InstructorListSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+        "department",
+        "department__faculty",
+    ]
+
+    def get_queryset(self):
+        return Instructor.objects.all()
+
+    @extend_schema(
+        request=None,
+        parameters=[],
+        responses={200: InstructorListSerializer},
+        auth=None,
+        operation_id="InstructorsList",
+        tags=["Faculty"],
+    )
+    def get(self, request, *args, **kwargs):
+        """
+        get list of the instructors
+        """
+        return super().get(request, *args, **kwargs)
+
+
+class InstructorByIDAPIView(BadRequestSerializerMixin, APIView):
+    permission_classes = [IsAuthenticatedAndActive]
+
+    @extend_schema(
+        request=None,
+        parameters=[],
+        responses={200: InstructorSerializer},
+        auth=None,
+        operation_id="InstructorById",
+        tags=["Faculty"],
+    )
+    def get(self, request, *args, **kwargs):
+        """
+        get instructor details by id
+        """
+        try:
+            instructor_obj = Instructor.objects.get(id=kwargs.get("instructor_id"))
+        except Instructor.DoesNotExist:
+            return error_response(
+                error=ErrorObject.NOT_FOUND,
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
+        response = InstructorSerializer(instructor_obj)
+        return success_response(data=response.data, status_code=status.HTTP_200_OK)
