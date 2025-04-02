@@ -13,7 +13,6 @@ ARG SECRET_KEY
 ENV SECRET_KEY="anunsecuresecrectkey"
 
 COPY . .
-COPY .env .env
 
 RUN python manage.py collectstatic --noinput
 
