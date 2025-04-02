@@ -23,6 +23,6 @@ INTERNAL_IPS = [
 ]
 
 # debug-toolbar middleware as early as possible in the list
-MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-] + MIDDLEWARE
+# MIDDLEWARE = [
+#     "debug_toolbar.middleware.DebugToolbarMiddleware",
+# ] + MIDDLEWARE
