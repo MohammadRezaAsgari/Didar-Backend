@@ -8,8 +8,17 @@ WORKDIR /home/didar/didar-backend
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY . .
-
 ARG SECRET_KEY
 # a secret key just for development build
 ENV SECRET_KEY="anunsecuresecrectkey"
+
+COPY . .
+COPY .env .env
+
+RUN python manage.py collectstatic --noinput
+
+COPY start.sh /start.sh
+
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
